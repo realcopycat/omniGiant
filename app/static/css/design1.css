@@ -1,0 +1,31 @@
+@charset "UTF-8";
+.jumbotron.jumbotron-fluid.text-center  {
+    height: 60rem;
+    background-position: 0% 0%;
+    background-size: cover;
+    background-image: url("/static/img/bg1.jpg");
+}
+
+p,h1,h3  {
+    color: white;
+}
+
+p,h1 {
+    height: 5rem;
+}
+
+h3 {
+    height: 4rem;
+}
+
+.lead {
+    margin-top: 6rem;
+}
+
+.display-4 {
+    letter-spacing: 1.5rem;
+}
+
+.eng {
+    letter-spacing: 0.5rem;
+}

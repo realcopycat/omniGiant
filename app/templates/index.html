@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    {{ super() }}
+    <link href="/static/css/design1.css" rel="stylesheet">
+
+{% endblock %}
+{% block page_content %}
+
+<div class="jumbotron jumbotron-fluid text-center col-xl-12">
+    <h1 class="display-4">现场勘查知识问答系统</h1>
+    <p class="eng">Criminal investigation Q&amp;A system<br></p>
+    <h3 id="height"><em>"The truth is more important than the facts."&nbsp;   </em></h3>
+        <h3><em>——&nbsp;Frank Lloyd Wright</em></h3>
+    <p class="lead">
+        <a class="btn btn-primary btn-lg" href="#" role="button">即刻使用</a>
+    </p>
+</div>
+<div class="container">
+    <hr>
+
+    <div class="row">
+        <div class="text-center col-lg-6 offset-lg-3">
+            <h4>中国人民公安大学警务信息技术与网络安全学院</h4>
+            <h6>Copyright &copy; 2019 &middot; All Rights Reserved </h6>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

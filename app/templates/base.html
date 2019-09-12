@@ -1,0 +1,42 @@
+{% extends "root.html" %}
+
+{% block title %} omniGiant 问答系统 {% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto" style="
+    margin-left: 90px;
+">
+            <li class="nav-item active"> <a class="nav-link" href="#">Omni Giant 现场勘查问答系统 <span class="sr-only">(current)</span></a> </li>
+        </ul>
+        <div class="btn-group" role="group" aria-label="Button group with nested dropdown" style="
+    margin-right: 90px;
+">
+            <button type="button" class="btn btn-secondary"> 关于我们</button>
+            <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 更多</button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <a class="dropdown-item" href="#">高级功能</a>
+                <a class="dropdown-item" href="#">联系方式</a></div>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+    {% block page_content %}{% endblock %}
+{% endblock %}
+
+{% block scripts %}
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/js/popper.min.js"></script>
+
+{{ super() }}
+{% endblock %}
+
