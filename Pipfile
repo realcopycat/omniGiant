@@ -1,6 +1,6 @@
 [[source]]
 name = "pypi"
-url = "https://pypi.org/simple"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
 verify_ssl = true
 
 [dev-packages]
@@ -9,6 +9,11 @@ verify_ssl = true
 flask = "*"
 bootstrap-flask = "*"
 neo4j-driver = "*"
+dash-daq = "*"
+dash = "*"
+dash-cytoscape = "*"
+plotly = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"
