@@ -5,21 +5,30 @@ import dash_html_components as html
 from graph_driver import Neo4jOperator
 from dash.dependencies import Input, Output, State
 
+
 app = dash.Dash(__name__)
+
+
+flex_style_space_between = {'display': 'flex',
+                            'flex-direction': 'row',
+                            'justify-content': 'space-between',
+                            'align-items': 'center'}
+
 
 app.layout = html.Div([
 
     # 标题栏
     html.Nav(className='navbar navbar-expand-lg navbar-dark bg-dark', children=[
 
-        html.A(className='navbar-brand', children=[
-            "现场勘查知识图谱探索系统"
-        ]),
-        html.Div(className='collapse navbar-collapse', children=[
-            html.Form(className='', children=[
-                html.Button(className='btn btn-outline-success', children=[
-                    "Contact us"
-                ])
+        html.Div(className='container', style=flex_style_space_between, children=[
+            html.A(className='navbar-brand', style={'color': 'white'}, children=[
+                html.Div(children=[
+                    "现场勘查知识图谱探索系统",
+                    html.Span(className='badge badge-pill badge-warning ml-2', children=["测试版"])
+                ]),
+            ]),
+            html.Button(className='btn btn-outline-success', children=[
+                "Contact us"
             ])
         ])
     ]),
@@ -27,26 +36,48 @@ app.layout = html.Div([
     html.Div(className='container', children=[
         # 设置中心
         html.Div(className='row', children=[
-            html.Div(className='col-6', children=[
-                dcc.Slider(
-                    id='number_of_main_node',
-                    min=3,
-                    max=100,
-                    step=1,
-                    value=10,
-                    marks={value: value for x, value in enumerate(range(1, 100, 10))}
-                )
-            ]),
+            html.Div(className='card-body border my-2 pb-3', children=[
+                html.Div(className='container', style=flex_style_space_between, children=[
+                    html.Div(className='', style={'flex-basis': '30%', 'flex-grow': '1'}, children=[
+                        html.Form(className='', children=[
+                            html.Div(className='input-group mb-3', children=[
+                                dcc.Input(
+                                    className="form-control",
+                                    id='search_keyword',
+                                    placeholder='Enter a keyword...',
+                                    type='text',
+                                    value=''
+                                ),
+                                html.Div(className='input-group-append', children=[
+                                    html.Button('开始搜索', id='start_button', type='button',
+                                                className="btn btn-info ml-3"),
 
-            html.Div(className='col-6', children=[
-                dcc.Input(
-                    id='search_keyword',
-                    placeholder='Enter a keyword...',
-                    type='text',
-                    value=''
-                ),
+                                ])
+                            ]),
+                            html.Div(className='input-group mb-3', children=[
+                                dcc.Input(
+                                    className="form-control",
+                                    id='search_relation_keyword',
+                                    placeholder='Enter a relation keyword...',
+                                    type='text',
+                                    value=''
+                                ),
+                            ]),
+                        ]),
+                    ]),
 
-                html.Button('开始搜索', id='start_button')
+                    html.Div(className='ml-5 mb-5', style={'width': '40%', 'flex-grow': '1'}, children=[
+                        html.P("您希望显示的节点个数："),
+                        dcc.Slider(
+                            id='number_of_main_node',
+                            min=0,
+                            max=100,
+                            step=1,
+                            value=10,
+                            marks={value: value for x, value in enumerate(range(0, 100, 10))}
+                        )
+                    ]),
+                ])
             ])
         ]),
 
@@ -63,7 +94,6 @@ app.layout = html.Div([
                 )
             ])
         ]),
-
 
         html.Div(className='row', children=[
             html.Div(className='col-6', children=[
