@@ -9,44 +9,59 @@ class Neo4jOperator:
         username = os.getenv("NEO_NAME") or 'neo4j'
         self._driver = GraphDatabase.driver("bolt://localhost:7687", auth=(username, password))
 
-    def search_data_normal(self, node_name):
+    def search_data_normal(self, node_name, number_limit=50):
         """
         普通的节点搜索模式
+        :param number_limit: 限制结果数量
         :param node_name: 节点名称
         :return: 节点列表, edge列表
         """
         with self._driver.session() as session:
             result = \
                 session.run(
-                    "match (a:node_main {name: $node_name})-[b]->c return a,b,c",
-                    node_name=node_name
+                    "MATCH p = (a)-[*..5]->(c)"  # 注意参考cypher语法
+                    "WHERE a.name CONTAINS $node_name "
+                    "RETURN *, relationships(p) LIMIT $limit",
+                    node_name=node_name, limit=number_limit
                 )
 
-            edge_result_list_dict = list()  # 其格式主要参照dash-cytoscape的文档要求 注意查阅https://dash.plot.ly/cytoscape/elements
+            edge_result_list_dict = list()  # 其格式主要参照dash-cytoscape的文档要求 注意查阅 https://dash.plot.ly/cytoscape/elements
             node_result_list_dict = list()
-            main_node_set = set()  # 为了区分主node与普通node
-            not_main_node_set = set()
+            node_set = set()  # 用于避免反复录入
 
-            for each_record in result:  # 对结果进行解析
-                main_node_set.add(each_record['a.name'])
-                not_main_node_set.add(each_record['b.name'])
+            for each in result.records():
+                # 每一个each都是一个路径，接下来要对这个路径做解析
+                for x in list(each['p'].graph.relationships._entity_dict.items()):  # 这里涉及到了对于内部成员的访问，但是没有办法，这样是比较方便的方法
+                    tmp_relation_description = x[1]._properties['description']  # 这个x[1]是因为x[0]是该路径的id，这里list的每一元素都是一个元组
+                    tmp_start_node = x[1].start_node._properties['name']  # 具体的访问实现细节请结合debug功能以及https://neo4j.com/docs/api/python-driver/1.7/results.html
+                    tmp_start_node_category = list(x[1].start_node.labels)  # list of str
+                    tmp_start_node_id = x[1].start_node._id
+                    tmp_end_node = x[1].end_node._properties['name']
+                    tmp_end_node_category = list(x[1].end_node.labels)  # list of str
+                    tmp_end_node_id = x[1].end_node._id
 
-                edge_result_list_dict.append({
-                    'source': each_record['a.name'],
-                    'target': each_record['c.name'],
-                    'edge': each_record['c.description']  # 边的内容
-                })
+                    # 制作结果数据 通过下述的语句，将路径中的节点和关系分解为一个一个的节点以及节点之间的关系
+                    # 为接下来的数据读取做好准备。其格式主要是为了dash的elements属性作准备
+                    if tmp_start_node_id not in node_set:
+                        node_set.add(tmp_start_node_id)
+                        node_result_list_dict.append({
+                            'id': tmp_start_node_id,
+                            'label': tmp_start_node,
+                            'category': tmp_start_node_category
+                        })
+                    if tmp_end_node_id not in node_set:
+                        node_set.add(tmp_end_node_id)
+                        node_result_list_dict.append({
+                            'id': tmp_end_node_id,
+                            'label': tmp_end_node,
+                            'category': tmp_end_node_category
+                        })
 
-            real_not_main_node_list = not_main_node_set - (not_main_node_set & main_node_set)  # 考虑到有些节点可能既是一般节点也是主节点 就先取交集然后减掉，得到真正的一般节点集合
+                    edge_result_list_dict.append({
+                        'source': tmp_start_node_id,
+                        'target': tmp_end_node_id,
+                        'edge_description': tmp_relation_description
+                    })
 
-            node_result_list_dict.extend([{
-                'category': 'main_node',
-                'label': x
-            }] for x in main_node_set)  # 制作节点列表1
-
-            node_result_list_dict.extend([{
-                'category': 'node',
-                'label': x
-            }] for x in real_not_main_node_list)  # 制作节点列表2
 
         return node_result_list_dict, edge_result_list_dict
