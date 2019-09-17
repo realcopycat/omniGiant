@@ -9,11 +9,19 @@ from dash.dependencies import Input, Output, State
 app = dash.Dash(__name__)
 
 
-flex_style_space_between = {'display': 'flex',
-                            'flex-direction': 'row',
-                            'justify-content': 'space-between',
-                            'align-items': 'center'}
+flex_style_space_between = {  # 通用的flex布局style
+    'display': 'flex',
+    'flex-direction': 'row',
+    'justify-content': 'space-between',
+    'align-items': 'center'
+}
 
+cover_css = {  # 用于布局这个封面的css文件
+    "height": "60rem",
+    "background-position": "0% 0%",
+    "background-size": "cover",
+    "background-image": 'url("/assets/img/bg1.jpg")'
+}
 
 app.layout = html.Div([
 
@@ -32,6 +40,18 @@ app.layout = html.Div([
             ])
         ])
     ]),
+
+    # 应用封面
+    html.Div(className="jumbotron jumbotron-fluid text-center", style=cover_css, children=[
+        html.H1(style={"letter-spacing": "1.5rem", "color": "white", "height": "5rem"}, children=[
+            "现场勘查知识图谱探索系统"
+        ]),
+        html.P(style={"height": "5rem", "letter-spacing": "0.5rem", "color": "white"}, children=[
+            "Criminal Investigation Knowledge Graph Exploring System"
+        ]),
+        html.H3(style={"height": "4rem", })
+    ]),
+
 
     html.Div(className='container', children=[
         # 设置中心
@@ -144,7 +164,7 @@ app.layout = html.Div([
      Input('number_of_main_node', 'value')],
     [State('search_keyword', 'value')]
 )
-def extract_data_from_neo4j(n_clicks, limit, value):
+def extract_data_from_neo4j(n_clicks, limit, relation_value, value):
     # 此部分为核心作图数据获取
     driver = Neo4jOperator()  # 初始化数据库驱动
     node_result, link_result = driver.search_data_normal(value, limit)  # 调用驱动提取数据
