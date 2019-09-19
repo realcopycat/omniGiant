@@ -42,14 +42,28 @@ app.layout = html.Div([
     ]),
 
     # 应用封面
-    html.Div(className="jumbotron jumbotron-fluid text-center", style=cover_css, children=[
-        html.H1(style={"letter-spacing": "1.5rem", "color": "white", "height": "5rem"}, children=[
+    html.Div(className="jumbotron jumbotron-fluid text-center", id="cover", style=cover_css, children=[
+        html.H1(style={"letter-spacing": "1.5rem", "color": "white", "height": "6rem", "font-size": "400%"}, children=[
             "现场勘查知识图谱探索系统"
         ]),
-        html.P(style={"height": "5rem", "letter-spacing": "0.5rem", "color": "white"}, children=[
+        html.P(style={"height": "5rem", "letter-spacing": "0.2rem", "color": "white"}, children=[
             "Criminal Investigation Knowledge Graph Exploring System"
         ]),
-        html.H3(style={"height": "4rem", })
+        html.H3(style={"height": "4rem", "color": "white"}, children=[
+            html.Em(children=[
+                "The truth is more important than the facts."
+            ])
+        ]),
+        html.H3(style={"height": "4rem", "color": "white"}, children=[
+            html.Em(children=[
+                "——  Frank Lloyd Wright"
+            ])
+        ]),
+        html.P(style={"margin-top": "6rem"}, children=[
+            html.Button(className="btn btn-primary btn-lg", id="uncover_button", role="button", children=[
+                "即刻使用"
+            ])
+        ])
     ]),
 
 
@@ -74,15 +88,6 @@ app.layout = html.Div([
 
                                 ])
                             ]),
-                            html.Div(className='input-group mb-3', children=[
-                                dcc.Input(
-                                    className="form-control",
-                                    id='search_relation_keyword',
-                                    placeholder='Enter a relation keyword...',
-                                    type='text',
-                                    value=''
-                                ),
-                            ]),
                         ]),
                     ]),
 
@@ -99,6 +104,16 @@ app.layout = html.Div([
                     ]),
                 ])
             ])
+        ]),
+
+        html.Div(className='input-group mb-3', children=[
+            dcc.Input(
+                className="form-control",
+                id='search_relation_keyword',
+                placeholder='Enter a relation keyword...',
+                type='text',
+                value=''
+            ),
         ]),
 
         html.Div(className='row', children=[
@@ -164,7 +179,7 @@ app.layout = html.Div([
      Input('number_of_main_node', 'value')],
     [State('search_keyword', 'value')]
 )
-def extract_data_from_neo4j(n_clicks, limit, relation_value, value):
+def extract_data_from_neo4j(n_clicks, limit, value):
     # 此部分为核心作图数据获取
     driver = Neo4jOperator()  # 初始化数据库驱动
     node_result, link_result = driver.search_data_normal(value, limit)  # 调用驱动提取数据
@@ -193,6 +208,7 @@ def extract_data_from_neo4j(n_clicks, limit, relation_value, value):
     return elements
 
 
+# 得到边的信息
 @app.callback(
     Output('graph-click-edge-output', 'children'),
     [Input('cytoscape-basic', 'tapEdgeData')]
@@ -200,3 +216,13 @@ def extract_data_from_neo4j(n_clicks, limit, relation_value, value):
 def display_edge_data(data):
     if data:
         return data['label']
+
+
+@app.callback(
+    Output('cover', 'className'),
+    [Input('uncover_button', 'n_clicks')]
+)
+def uncover(n_clicks):
+    if n_clicks is None or n_clicks <= 0:
+        return "jumbotron jumbotron-fluid text-center"
+    return "d-none"
