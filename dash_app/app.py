@@ -144,7 +144,7 @@ app.layout = html.Div([
                     layout={'name': 'cose'},
                     style={'width': '100%', 'height': '1000px'},
                     elements=[],
-                    stylesheet=[
+                    stylesheet=[  # 此处为绘图style 控制
                         {
                             'selector': 'node',
                             'style': {
