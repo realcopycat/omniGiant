@@ -5,9 +5,7 @@ import dash_html_components as html
 from graph_driver import Neo4jOperator
 from dash.dependencies import Input, Output, State
 
-
 app = dash.Dash(__name__)
-
 
 flex_style_space_between = {  # 通用的flex布局style
     'display': 'flex',
@@ -31,7 +29,7 @@ app.layout = html.Div([
         html.Div(className='container', style=flex_style_space_between, children=[
             html.A(className='navbar-brand', style={'color': 'white'}, children=[
                 html.Div(children=[
-                    "现场勘查知识图谱探索系统",
+                    "OMNI知识图谱探索系统",
                     html.Span(className='badge badge-pill badge-warning ml-2', children=["测试版"])
                 ]),
             ]),
@@ -44,10 +42,10 @@ app.layout = html.Div([
     # 应用封面
     html.Div(className="jumbotron jumbotron-fluid text-center", id="cover", style=cover_css, children=[
         html.H1(style={"letter-spacing": "1.5rem", "color": "white", "height": "6rem", "font-size": "400%"}, children=[
-            "现场勘查知识图谱探索系统"
+            "OMNI知识图谱探索系统"
         ]),
         html.P(style={"height": "5rem", "letter-spacing": "0.2rem", "color": "white"}, children=[
-            "Criminal Investigation Knowledge Graph Exploring System"
+            "OMNI Knowledge Graph Exploring System"
         ]),
         html.H3(style={"height": "4rem", "color": "white"}, children=[
             html.Em(children=[
@@ -69,6 +67,55 @@ app.layout = html.Div([
 
     html.Div(className='container', children=[
         # 设置中心
+        html.Div(className='row', children=[
+            html.Div(className='accordion', id='configureCenter', children=[
+                # 折叠控件
+                html.Div(className='card', children=[
+                    html.Div(className='card-header', id='panel1', children=[
+                        html.H2(className='mb-0', children=[
+                            html.Button(className='btn btn-link', type='button', **{
+                                'data-toggle': 'collapse', 'data-target': '#cardcontent1',
+                                'aria-expanded': 'true', 'aria-controls': 'cardcontent1'},
+                                        children=[
+                                            '知识节点搜索控制'
+                                        ])
+                        ])
+                    ]),
+
+                    html.Div(id='cardcontent1', className='collapse',
+                             **{'aria-labelledby': 'panel1', 'data-parent': '#configureCenter'},
+                             children=[
+                                 html.Div(className='card-body', children=[
+                                     "TEST"
+                                 ])
+                             ])
+                ]),
+
+                html.Div(className='card', children=[
+                    html.Div(className='card-header', id='panel2', children=[
+                        html.H2(className='mb-0', children=[
+                            html.A(className='btn btn-link', role='button', href='#cardcontent2', **{
+                                'data-toggle': 'collapse',
+                                'aria-expanded': 'false', 'aria-controls': 'cardcontent2'},
+                                        children=[
+                                            '知识节点筛选'
+                                        ])
+                        ])
+                    ]),
+
+                    html.Div(id='cardcontent2', className='collapse',
+                             **{'aria-labelledby': 'panel2', 'data-parent': '#configureCenter'},
+                             children=[
+                                 html.Div(className='card-body', children=[
+                                     "TEST"
+                                 ])
+                             ])
+                ]),
+
+            ]),
+
+        ]),
+
         html.Div(className='row', children=[
             html.Div(className='card-body border my-2 pb-3', children=[
                 html.Div(className='container', style=flex_style_space_between, children=[
@@ -106,34 +153,38 @@ app.layout = html.Div([
             ])
         ]),
 
-        html.Div(className='input-group mb-3', children=[
-            dcc.Input(
-                className="form-control",
-                id='search_relation_keyword',
-                placeholder='Enter a relation keyword...',
-                type='text',
-                value=''
-            ),
-        ]),
-
+        # 二次设置组件
         html.Div(className='row', children=[
-            html.Div(className='col-6', children=[
-                dcc.Dropdown(
-                    id='layout_select',
-                    value='random',
-                    clearable=False,
-                    options=[
-                        {'label': name.capitalize(), 'value': name}
-                        for name in ['grid', 'random', 'circle', 'cose', 'concentric']
-                    ]
-                )
-            ])
-        ]),
+            html.Div(className='card-body border my-2 pd-3', children=[
 
-        html.Div(className='row', children=[
-            html.Div(className='col-6', children=[
-                html.P(id='graph-click-edge-output')
-            ])
+                html.Div(className='row', children=[
+                    html.Div(className='col-6', children=[
+                        html.Div(className='input-group mb-3', children=[
+                            dcc.Input(
+                                className="form-control",
+                                id='search_relation_keyword',
+                                placeholder='Enter a relation keyword...',
+                                type='text',
+                                value=''
+                            ),
+                        ]),
+
+                        dcc.Dropdown(
+                            id='layout_select',
+                            value='random',
+                            clearable=False,
+                            options=[
+                                {'label': name.capitalize(), 'value': name}
+                                for name in ['grid', 'random', 'circle', 'cose', 'concentric']
+                            ]
+                        )
+                    ]),
+
+                    html.Div(className='col-6', children=[
+                        html.P(id='graph-click-edge-output')
+                    ])
+                ]),
+            ]),
         ]),
 
         # 接下来是绘图区域
@@ -168,7 +219,7 @@ app.layout = html.Div([
                 )
             ])
         ])
-    ])
+    ]),
 ])
 
 
