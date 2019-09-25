@@ -69,40 +69,60 @@ app.layout = html.Div([
             html.Div(className='col-2 d-xs-none', children=[
                 html.Ul(className='nav nav-tabs nav-stacked', children=[
                     html.Li(children=[
-                        html.Div(className='card-body', children=[
-                            html.P(className='mr-4', children=['知识节点搜索']),
-                            html.Div(className='row', children=[
-                                html.Div(className='container', children=[
-                                    html.Div(className='row', children=[
-                                        dcc.Input(className="form-control",
-                                                  id='search_keyword',
-                                                  placeholder='Enter a keyword...',
-                                                  type='text',
-                                                  value='')
+                        html.Div(className='row', children=[
+                            html.Div(className='card-body my-2 pd-3', children=[
+                                html.P(className='mr-4', children=['知识节点搜索']),
+                                html.Div(className='row', children=[
+                                    dcc.Input(className="form-control",
+                                              id='search_keyword',
+                                              placeholder='Enter a keyword...',
+                                              type='text',
+                                              value='')
+                                ]),
+                                html.Div(className='row', children=[
+                                    html.Button('开始搜索',
+                                                id='main_search_button',
+                                                type='button',
+                                                className="btn btn-primary btn-block btn-sm")
+                                ]),
+                                html.Div(className='row', children=[
+                                    html.Div(className='my-4 ml-3', style={'width': '40%', 'flex-grow': '1'}, children=[
+                                        html.P("您希望显示的节点个数："),
+                                        dcc.Slider(id='number_of_main_node',
+                                                   min=0,
+                                                   max=100,
+                                                   step=1,
+                                                   value=10,
+                                                   marks={
+                                                       value: value for x, value in enumerate(range(0, 100, 10))
+                                                   }
+                                        )
                                     ]),
-                                    html.Div(className='row', children=[
-                                        html.Button('开始搜索',
-                                                    id='main_search_button',
-                                                    type='button',
-                                                    className="btn btn-primary btn-block btn-sm")
-                                    ]),
-                                    html.Div(className='row', children=[
-                                        html.Div(className='my-4', style={'width': '40%', 'flex-grow': '1'}, children=[
-                                            html.P("您希望显示的节点个数："),
-                                            dcc.Slider(id='number_of_main_node',
-                                                       min=0,
-                                                       max=100,
-                                                       step=1,
-                                                       value=10,
-                                                       marks={
-                                                           value: value for x, value in enumerate(range(0, 100, 10))
-                                                       }
-                                            )
-                                        ]),
-                                    ])
                                 ])
+                            ])
+                        ]),
+                    ]),
+                    html.Li(children=[
+                        html.Div(className='d-flex flex-column justify-content-start', children=[
+                            html.Div(className='input-group mb-3', children=[
+                                dcc.Input(className="form-control",
+                                          id='search_relation_keyword',
+                                          placeholder='Enter a relation keyword...',
+                                          type='text',
+                                          value=''
+                                          )
                             ]),
-                        ])
+                            dcc.Dropdown(id='layout_select',
+                                         value='random',
+                                         clearable=False,
+                                         options=[
+                                             {'label': name.capitalize(), 'value': name}
+                                             for name in
+                                             ['grid', 'random', 'circle', 'cose',
+                                              'concentric']
+                                         ]
+                            )
+                        ]),
                     ])
                 ])
             ]),
@@ -133,38 +153,10 @@ app.layout = html.Div([
                                          'data-parent': '#configureCenter'
                                      },
                                      children=[
-                                          html.Div(className='card-body', children=[
-                                              # 二次设置组件
-                                              html.Div(className='row', children=[
-                                                  html.Div(className='card-body my-2 pd-3', children=[
-                                                      html.Div(className='row', children=[
-                                                          html.Div(className='col-6', children=[
-                                                              html.Div(className='input-group mb-3', children=[
-                                                                  dcc.Input(className="form-control",
-                                                                            id='search_relation_keyword',
-                                                                            placeholder='Enter a relation keyword...',
-                                                                            type='text',
-                                                                            value=''
-                                                                  )
-                                                              ]),
-                                                              dcc.Dropdown(id='layout_select',
-                                                                           value='random',
-                                                                           clearable=False,
-                                                                           options=[
-                                                                               {'label': name.capitalize(), 'value': name}
-                                                                               for name in
-                                                                               ['grid', 'random', 'circle', 'cose',
-                                                                                'concentric']
-                                                                           ]
-                                                              )
-                                                          ]),
-                                                          html.Div(className='col-6', children=[
-                                                              html.P(id='graph-click-edge-output')
-                                                          ])
-                                                      ]),
-                                                  ]),
-                                              ]),
-                                          ])
+                                         html.Div(className='col-6', children=[
+                                             html.P(id='graph-click-edge-output')
+                                         ]),
+
                                      ]
                             )
                         ]),
