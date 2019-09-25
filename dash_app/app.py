@@ -70,6 +70,7 @@ app.layout = html.Div([
                 html.Ul(className='nav nav-tabs nav-stacked', children=[
                     html.Li(children=[
                         html.Div(className='card-body', children=[
+                            html.P(className='mr-4', children=['知识节点搜索']),
                             html.Div(className='row', children=[
                                 html.Div(className='container', children=[
                                     html.Div(className='row', children=[
@@ -84,23 +85,23 @@ app.layout = html.Div([
                                                     id='main_search_button',
                                                     type='button',
                                                     className="btn btn-primary btn-block btn-sm")
+                                    ]),
+                                    html.Div(className='row', children=[
+                                        html.Div(className='my-4', style={'width': '40%', 'flex-grow': '1'}, children=[
+                                            html.P("您希望显示的节点个数："),
+                                            dcc.Slider(id='number_of_main_node',
+                                                       min=0,
+                                                       max=100,
+                                                       step=1,
+                                                       value=10,
+                                                       marks={
+                                                           value: value for x, value in enumerate(range(0, 100, 10))
+                                                       }
+                                            )
+                                        ]),
                                     ])
                                 ])
                             ]),
-                            html.Div(className='row', children=[
-                                html.Div(className='mt-4', style={'width': '40%', 'flex-grow': '1'}, children=[
-                                    html.P("您希望显示的节点个数："),
-                                    dcc.Slider(id='number_of_main_node',
-                                               min=0,
-                                               max=100,
-                                               step=1,
-                                               value=10,
-                                               marks={
-                                                   value: value for x, value in enumerate(range(0, 100, 10))
-                                               }
-                                    )
-                                ]),
-                            ])
                         ])
                     ])
                 ])
@@ -119,7 +120,7 @@ app.layout = html.Div([
                                                'data-toggle': 'collapse',
                                                'aria-expanded': 'false',
                                                'aria-controls': 'cardcontent2'
-                                            },
+                                           },
                                            children=[
                                                '知识节点筛选'
                                            ]
