@@ -66,110 +66,86 @@ app.layout = html.Div([
 
     html.Div(className='container-fluid', children=[
         html.Div(className='row', children=[
-            html.Div(className='col-2 d-xs-none', children=[
-                html.Ul(className='nav nav-tabs nav-stacked', children=[
-                    html.Li(children=[
-                        html.Div(className='row', children=[
-                            html.Div(className='card-body my-2 pd-3', children=[
-                                html.P(className='mr-4', children=['知识节点搜索']),
-                                html.Div(className='row', children=[
-                                    dcc.Input(className="form-control",
-                                              id='search_keyword',
-                                              placeholder='Enter a keyword...',
-                                              type='text',
-                                              value='')
-                                ]),
-                                html.Div(className='row', children=[
-                                    html.Button('开始搜索',
-                                                id='main_search_button',
-                                                type='button',
-                                                className="btn btn-primary btn-block btn-sm")
-                                ]),
-                                html.Div(className='row', children=[
-                                    html.Div(className='my-4 ml-3', style={'width': '40%', 'flex-grow': '1'}, children=[
-                                        html.P("您希望显示的节点个数："),
-                                        dcc.Slider(id='number_of_main_node',
-                                                   min=0,
-                                                   max=100,
-                                                   step=1,
-                                                   value=10,
-                                                   marks={
-                                                       value: value for x, value in enumerate(range(0, 100, 10))
-                                                   }
-                                        )
-                                    ]),
-                                ])
-                            ])
-                        ]),
-                    ]),
-                    html.Li(children=[
-                        html.Div(className='d-flex flex-column justify-content-start', children=[
-                            html.Div(className='input-group mb-3', children=[
-                                dcc.Input(className="form-control",
-                                          id='search_relation_keyword',
-                                          placeholder='Enter a relation keyword...',
-                                          type='text',
-                                          value=''
-                                          )
-                            ]),
-                            dcc.Dropdown(id='layout_select',
-                                         value='random',
-                                         clearable=False,
-                                         options=[
-                                             {'label': name.capitalize(), 'value': name}
-                                             for name in
-                                             ['grid', 'random', 'circle', 'cose',
-                                              'concentric']
-                                         ]
-                            )
-                        ]),
-                    ])
-                ])
-            ]),
-            html.Div(className='col-10', children=[
-                # 设置中心
-                html.Div(className='container mt-3', style=flex_style_space_between, children=[
-                    html.Div(className='accordion w-100', id='configureCenter', children=[
-                        html.Div(className='card', children=[
-                            html.Div(className='card-header', id='panel2', children=[
-                                html.H2(className='mb-0', children=[
-                                    html.A(className='btn btn-link',
-                                           role='button',
-                                           href='#cardcontent2',
-                                           **{
-                                               'data-toggle': 'collapse',
-                                               'aria-expanded': 'false',
-                                               'aria-controls': 'cardcontent2'
-                                           },
-                                           children=[
-                                               '知识节点筛选'
-                                           ]
-                                    )
-                                ])
-                            ]),
-                            html.Div(id='cardcontent2', className='collapse',
-                                     **{
-                                         'aria-labelledby': 'panel2',
-                                         'data-parent': '#configureCenter'
-                                     },
+            html.Div(className='col-3 d-xs-none', children=[
+                html.Ul(className='nav nav-tabs nav-stacked border-0', children=[
+                    html.Div(className='d-flex flex-column justify-content-start w-100', children=[
+                        html.Div(className='flex-fill', children=[
+                            html.Div(className='d-flex flex-column justify-content-start my-4 border px-3 py-3',
                                      children=[
-                                         html.Div(className='col-6', children=[
-                                             html.P(id='graph-click-edge-output')
+                                         html.Strong(className='my-3', children=[
+                                             "知识节点查询"
+                                         ]),
+                                         dcc.Input(className="form-control mb-4 flex-fill",
+                                                   id='search_keyword',
+                                                   placeholder='Enter a keyword...',
+                                                   type='text',
+                                                   value=''
+                                                   ),
+                                         html.Button('开始搜索',
+                                                     id='main_search_button',
+                                                     type='button',
+                                                     className="btn btn-primary btn-block mb-4"
+                                                     ),
+                                         html.P(className='mb-4', children=["您希望显示的节点个数："]),
+                                         dcc.Slider(id='number_of_main_node',
+                                                    className='mb-4 ml-3',
+                                                    min=0,
+                                                    max=100,
+                                                    step=1,
+                                                    value=10,
+                                                    marks={
+                                                        value: value for x, value in enumerate(range(0, 100, 10))
+                                                    }
+                                                    )
+                                     ])
+                        ]),
+                        html.Li(children=[
+                            html.Div(className='d-flex flex-column justify-content-start mb-4 border px-3 py-3',
+                                     children=[
+                                         html.Strong(className='my-3', children=[
+                                             "知识节点筛选"
+                                         ]),
+                                         html.Div(className='input-group mb-3', children=[
+                                             dcc.Input(className="form-control",
+                                                       id='search_relation_keyword',
+                                                       placeholder='Enter a relation keyword...',
+                                                       type='text',
+                                                       value=''
+                                             )
+                                         ]),
+                                         html.Button('筛选',
+                                                     id='filter_button',
+                                                     type='button',
+                                                     className="btn btn-primary btn-block mb-4"
+                                         ),
+                                         html.Strong(className='my-3', children=[
+                                             "节点布局调节"
                                          ]),
 
+                                         dcc.Dropdown(id='layout_select',
+                                                      value='random',
+                                                      clearable=False,
+                                                      options=[
+                                                          {'label': name.capitalize(), 'value': name}
+                                                          for name in
+                                                          ['grid', 'random', 'circle', 'cose',
+                                                           'concentric']
+                                                      ]
+                                         )
                                      ]
-                            )
-                        ]),
-                    ]),
+                            ),
+                        ])
+                    ])
                 ]),
-
+            ]),
+            html.Div(className='col-9', children=[
                 # 接下来是绘图区域
                 html.Div(className='row', children=[
                     html.Div(className='col-12', children=[
                         cyto.Cytoscape(
                             id='cytoscape-basic',
                             layout={'name': 'cose'},
-                            style={'width': '100%', 'height': '1000px'},
+                            style={'width': '100%', 'height': '600px'},
                             elements=[],
                             stylesheet=[  # 此处为绘图style 控制
                                 {
@@ -194,8 +170,41 @@ app.layout = html.Div([
                             ]
                         )
                     ])
-                ])
+                ]),
+                html.Div(className='container mt-3', style=flex_style_space_between, children=[
+                    html.Div(className='accordion w-100', id='configureCenter', children=[
+                        html.Div(className='card', children=[
+                            html.Div(className='card-header', id='panel2', children=[
+                                html.H2(className='mb-0', children=[
+                                    html.A(className='btn btn-link',
+                                           role='button',
+                                           href='#cardcontent2',
+                                           **{
+                                               'data-toggle': 'collapse',
+                                               'aria-expanded': 'false',
+                                               'aria-controls': 'cardcontent2'
+                                           },
+                                           children=[
+                                               '知识节点筛选'
+                                           ]
+                                           )
+                                ])
+                            ]),
+                            html.Div(id='cardcontent2', className='collapse',
+                                     **{
+                                         'aria-labelledby': 'panel2',
+                                         'data-parent': '#configureCenter'
+                                     },
+                                     children=[
+                                         html.Div(className='col-6', children=[
+                                             html.P(id='graph-click-edge-output')
+                                         ]),
 
+                                     ]
+                            )
+                        ]),
+                    ]),
+                ]),
             ])
         ]),
     ]),
