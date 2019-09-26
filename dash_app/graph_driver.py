@@ -33,7 +33,8 @@ class Neo4jOperator:
                 # 每一个each都是一个路径，接下来要对这个路径做解析
                 for x in list(each['p'].graph.relationships._entity_dict.items()):  # 这里涉及到了对于内部成员的访问，但是没有办法，这样是比较方便的方法
                     tmp_relation_description = x[1]._properties['description']  # 这个x[1]是因为x[0]是该路径的id，这里list的每一元素都是一个元组
-                    tmp_start_node = x[1].start_node._properties['name']  # 具体的访问实现细节请结合debug功能以及https://neo4j.com/docs/api/python-driver/1.7/results.html
+                    tmp_start_node = x[1].start_node._properties[
+                        'name']  # 具体的访问实现细节请结合debug功能以及https://neo4j.com/docs/api/python-driver/1.7/results.html
                     tmp_start_node_category = list(x[1].start_node.labels)  # list of str
                     tmp_start_node_id = x[1].start_node._id
                     tmp_end_node = x[1].end_node._properties['name']
@@ -63,5 +64,30 @@ class Neo4jOperator:
                         'edge_description': tmp_relation_description
                     })
 
-
         return node_result_list_dict, edge_result_list_dict
+
+    @staticmethod
+    def data_packing(node_result, link_result):
+        nodes = list()
+        for _, node_dict in enumerate(node_result):
+            tmp_node = {
+                'data': {'id': node_dict['id'], 'label': node_dict['label']},
+                'classes': ' '.join(node_dict['category'])  # 这里是把列表内的字符串拼接在一起，这样可以满足dash的要求
+                # 具体参见 https://dash.plot.ly/cytoscape/styling
+            }
+            nodes.append(tmp_node)  # 之所以要用与下面的不一样的方法，是因为这里用到的enumerate是一个迭代器。并非一个完整的list
+
+        # edges = list()
+        edges = [
+            {
+                'data': {'source': link_dict['source'],
+                         'target': link_dict['target'],
+                         'label': link_dict['edge_description']
+                         }
+            }
+            for link_dict in link_result
+        ]
+
+        elements = nodes + edges
+
+        return elements

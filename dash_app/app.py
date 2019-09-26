@@ -85,7 +85,8 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                          html.Button('开始搜索',
                                                      id='main_search_button',
                                                      type='button',
-                                                     className="btn btn-primary btn-block mb-4"
+                                                     className="btn btn-primary btn-block mb-4",
+                                                     n_clicks_timestamp=0,
                                                      ),
                                          html.P(className='mb-4', children=["您希望显示的节点个数："]),
                                          dcc.Slider(id='number_of_main_node',
@@ -100,7 +101,8 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                          html.Button('清空',
                                                      id='clear_graph',
                                                      type='button',
-                                                     className="btn btn-warning btn-block mb-4")
+                                                     className="btn btn-warning btn-block my-3",
+                                                     n_clicks_timestamp=0)
                                      ])
                         ]),
                         html.Li(children=[
@@ -121,7 +123,8 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                          html.Button('筛选',
                                                      id='filter_button',
                                                      type='button',
-                                                     className="btn btn-primary btn-block mb-4"
+                                                     className="btn btn-primary btn-block mb-4",
+                                                     n_clicks_timestamp=0
                                                      ),
                                          html.Strong(className='my-3', children=[
                                              "节点布局调节"
@@ -200,37 +203,22 @@ app.layout = html.Div(style={'height': '100%'}, children=[
     [Input('main_search_button', 'n_clicks_timestamp'),
      Input('number_of_main_node', 'value'),
      Input('filter_button', 'n_clicks_timestamp'),
-     Input('clear_graph', 'n_clicks_timestamp')],
+     Input('clear_graph', 'n_clicks_timestamp'),
+     Input('cytoscape-basic', 'tapNodeData')],
     [State('search_keyword', 'value'),
-     State('search_relation_keyword', 'value')]
+     State('search_relation_keyword', 'value'),
+     State('cytoscape-basic', 'elements')]
 )
-def extract_data_from_neo4j(n_clicks, limit, n_clicks_of_relation, n_clicks_of_clear, value, value_relation):
+def extract_data_from_neo4j(n_clicks, limit, n_clicks_of_relation, n_clicks_of_clear,
+                            tap_node_data, value, value_relation, origin_element_data):
     # 此部分为核心作图数据获取
 
     driver = Neo4jOperator()  # 初始化数据库驱动
     node_result, link_result = driver.search_data_normal(value, limit)  # 调用驱动提取数据
 
-    nodes = list()
-    for _, node_dict in enumerate(node_result):
-        tmp_node = {
-            'data': {'id': node_dict['id'], 'label': node_dict['label']},
-            'classes': ' '.join(node_dict['category'])  # 这里是把列表内的字符串拼接在一起，这样可以满足dash的要求
-            # 具体参见 https://dash.plot.ly/cytoscape/styling
-        }
-        nodes.append(tmp_node)  # 之所以要用与下面的不一样的方法，是因为这里用到的enumerate是一个迭代器。并非一个完整的list
+    elements = driver.data_packing(node_result, link_result)  # 调用封装好的静态方法
 
-    # edges = list()
-    edges = [
-        {
-            'data': {'source': link_dict['source'],
-                     'target': link_dict['target'],
-                     'label': link_dict['edge_description']
-                     }
-        }
-        for link_dict in link_result
-    ]
-
-    elements = nodes + edges
+    # 数据节点选中并刷新
 
     # 接下来是筛选器
     if value_relation == '':
