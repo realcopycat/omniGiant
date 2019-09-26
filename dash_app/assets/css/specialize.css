@@ -1,3 +1,12 @@
 body {
     height: 100%;
+    margin: 0;
+}
+
+#react-entry-point {
+    height: 1000px;
+}
+
+strong {
+    color: white;
 }
