@@ -97,8 +97,8 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                                     marks={
                                                         value: value for x, value in enumerate(range(0, 100, 10))
                                                     }
-                                                    )
-                                     ])
+                                         )
+                            ])
                         ]),
                         html.Li(children=[
                             html.Div(className='d-flex flex-column justify-content-start mb-4 border px-3 py-3',
@@ -202,6 +202,9 @@ app.layout = html.Div(style={'height': '100%'}, children=[
 )
 def extract_data_from_neo4j(n_clicks, limit, value):
     # 此部分为核心作图数据获取
+    if n_clicks is None:
+        return None
+
     driver = Neo4jOperator()  # 初始化数据库驱动
     node_result, link_result = driver.search_data_normal(value, limit)  # 调用驱动提取数据
 
@@ -264,13 +267,23 @@ def layout_setting(layout):
      Input('search_relation_keyword', 'value')],
     [State('cytoscape-basic'), 'elements']
 )
-def edge_filter(click, search_keyword ,exist_elements):
+def edge_filter(click, search_keyword, exist_elements):
+    if click is None:
+        return exist_elements
+    filter_data = []
     for each in exist_elements:
         try:
-            source_node = each['data']['source']
-            target_node = each['data']['target']
+            source_node = each['data']['source']  # 用于测试是否是节点数据
+            # target_node = each['data']['target']
         except KeyError as e:
+            # 如果进入此处说明是个节点数据,直接接入
+            filter_data.append(each)
             continue
         else:
-            if each['data']['label']
+            if search_keyword in each['data']['label']:
+                filter_data.append(each)
+            else:
+                continue
+
+
 
