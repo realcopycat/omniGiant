@@ -96,9 +96,8 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                                     value=10,
                                                     marks={
                                                         value: value for x, value in enumerate(range(0, 100, 10))
-                                                    }
-                                         )
-                            ])
+                                                    })
+                                     ])
                         ]),
                         html.Li(children=[
                             html.Div(className='d-flex flex-column justify-content-start mb-4 border px-3 py-3',
@@ -113,13 +112,13 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                                        placeholder='Enter a relation keyword...',
                                                        type='text',
                                                        value=''
-                                             )
+                                                       )
                                          ]),
                                          html.Button('筛选',
                                                      id='filter_button',
                                                      type='button',
                                                      className="btn btn-primary btn-block mb-4"
-                                         ),
+                                                     ),
                                          html.Strong(className='my-3', children=[
                                              "节点布局调节"
                                          ]),
@@ -132,10 +131,8 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                                           for name in
                                                           ['grid', 'random', 'circle', 'cose',
                                                            'concentric']
-                                                      ]
-                                         )
-                                     ]
-                            ),
+                                                      ])
+                                     ]),
                         ])
                     ])
                 ]),
@@ -197,13 +194,13 @@ app.layout = html.Div(style={'height': '100%'}, children=[
 @app.callback(
     Output('cytoscape-basic', 'elements'),
     [Input('main_search_button', 'n_clicks'),
-     Input('number_of_main_node', 'value')],
-    [State('search_keyword', 'value')]
+     Input('number_of_main_node', 'value'),
+     Input('filter_button', 'n_clicks')],
+    [State('search_keyword', 'value'),
+     State('search_relation_keyword', 'value')]
 )
-def extract_data_from_neo4j(n_clicks, limit, value):
+def extract_data_from_neo4j(n_clicks, limit, n_clicks_of_relation, value, value_relation):
     # 此部分为核心作图数据获取
-    if n_clicks is None:
-        return None
 
     driver = Neo4jOperator()  # 初始化数据库驱动
     node_result, link_result = driver.search_data_normal(value, limit)  # 调用驱动提取数据
@@ -230,7 +227,26 @@ def extract_data_from_neo4j(n_clicks, limit, value):
 
     elements = nodes + edges
 
-    return elements
+    # 接下来是筛选器
+    if value_relation == '':
+        filter_data = elements
+    else:
+        filter_data = []
+        for each in elements:
+            try:
+                _ = each['data']['source']  # 用于测试是否是节点数据
+                # target_node = each['data']['target']
+            except KeyError as _:
+                # 如果进入此处说明是个节点数据,直接接入
+                filter_data.append(each)
+                continue
+            else:
+                if value_relation in each['data']['label']:
+                    filter_data.append(each)
+                else:
+                    continue
+
+    return filter_data
 
 
 # 得到边的信息
@@ -259,31 +275,3 @@ def uncover(n_clicks):
 )
 def layout_setting(layout):
     return {'name': layout}
-
-
-@app.callback(
-    Output('cytoscape-basic', 'elements'),
-    [Input('filter_button', 'n_clicks'),
-     Input('search_relation_keyword', 'value')],
-    [State('cytoscape-basic'), 'elements']
-)
-def edge_filter(click, search_keyword, exist_elements):
-    if click is None:
-        return exist_elements
-    filter_data = []
-    for each in exist_elements:
-        try:
-            source_node = each['data']['source']  # 用于测试是否是节点数据
-            # target_node = each['data']['target']
-        except KeyError as e:
-            # 如果进入此处说明是个节点数据,直接接入
-            filter_data.append(each)
-            continue
-        else:
-            if search_keyword in each['data']['label']:
-                filter_data.append(each)
-            else:
-                continue
-
-
-
