@@ -21,7 +21,7 @@ cover_css = {  # 用于布局这个封面的css文件
     "background-image": 'url("/assets/img/bg1.jpg")'
 }
 
-app.layout = html.Div([
+app.layout = html.Div(style={'height': '100%'}, children=[
 
     # 标题栏
     html.Nav(className='navbar navbar-expand-lg navbar-dark bg-dark', children=[
@@ -64,7 +64,7 @@ app.layout = html.Div([
         ])
     ]),
 
-    html.Div(className='container-fluid', children=[
+    html.Div(className='container-fluid', style={'background-color': '#3A373E', 'height': '100%'}, children=[
         html.Div(className='row', children=[
             html.Div(className='col-3 d-xs-none', children=[
                 html.Ul(className='nav nav-tabs nav-stacked border-0', children=[
@@ -172,37 +172,19 @@ app.layout = html.Div([
                     ])
                 ]),
                 html.Div(className='container mt-3', style=flex_style_space_between, children=[
-                    html.Div(className='accordion w-100', id='configureCenter', children=[
-                        html.Div(className='card', children=[
-                            html.Div(className='card-header', id='panel2', children=[
-                                html.H2(className='mb-0', children=[
-                                    html.A(className='btn btn-link',
-                                           role='button',
-                                           href='#cardcontent2',
-                                           **{
-                                               'data-toggle': 'collapse',
-                                               'aria-expanded': 'false',
-                                               'aria-controls': 'cardcontent2'
-                                           },
-                                           children=[
-                                               '知识节点筛选'
-                                           ]
-                                           )
-                                ])
+                    html.Div(className='card w-45 h-50 border', children=[
+                        html.Div(className='card-body', children=[
+                            html.Div(className='', children=[
+                                html.P(id='graph-click-edge-output')
                             ]),
-                            html.Div(id='cardcontent2', className='collapse',
-                                     **{
-                                         'aria-labelledby': 'panel2',
-                                         'data-parent': '#configureCenter'
-                                     },
-                                     children=[
-                                         html.Div(className='col-6', children=[
-                                             html.P(id='graph-click-edge-output')
-                                         ]),
-
-                                     ]
-                            )
-                        ]),
+                        ])
+                    ]),
+                    html.Div(className='card w-45 h-50 border', children=[
+                        html.Div(className='card-body', children=[
+                            html.Div(className='', children=[
+                                html.P(id='graph-click-point-output')
+                            ]),
+                        ])
                     ]),
                 ]),
             ])
