@@ -96,7 +96,11 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                                     value=10,
                                                     marks={
                                                         value: value for x, value in enumerate(range(0, 100, 10))
-                                                    })
+                                                    }),
+                                         html.Button('清空',
+                                                     id='clear_graph',
+                                                     type='button',
+                                                     className="btn btn-warning btn-block mb-4")
                                      ])
                         ]),
                         html.Li(children=[
@@ -193,13 +197,14 @@ app.layout = html.Div(style={'height': '100%'}, children=[
 # 仅设置搜索框
 @app.callback(
     Output('cytoscape-basic', 'elements'),
-    [Input('main_search_button', 'n_clicks'),
+    [Input('main_search_button', 'n_clicks_timestamp'),
      Input('number_of_main_node', 'value'),
-     Input('filter_button', 'n_clicks')],
+     Input('filter_button', 'n_clicks_timestamp'),
+     Input('clear_graph', 'n_clicks_timestamp')],
     [State('search_keyword', 'value'),
      State('search_relation_keyword', 'value')]
 )
-def extract_data_from_neo4j(n_clicks, limit, n_clicks_of_relation, value, value_relation):
+def extract_data_from_neo4j(n_clicks, limit, n_clicks_of_relation, n_clicks_of_clear, value, value_relation):
     # 此部分为核心作图数据获取
 
     driver = Neo4jOperator()  # 初始化数据库驱动
@@ -245,6 +250,10 @@ def extract_data_from_neo4j(n_clicks, limit, n_clicks_of_relation, value, value_
                     filter_data.append(each)
                 else:
                     continue
+
+    if int(n_clicks_of_clear) > int(n_clicks_of_relation) and \
+            int(n_clicks_of_clear) > int(n_clicks):
+        filter_data = []
 
     return filter_data
 
