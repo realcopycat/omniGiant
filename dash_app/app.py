@@ -80,7 +80,7 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                                    id='search_keyword',
                                                    placeholder='Enter a keyword...',
                                                    type='text',
-                                                   value=''
+                                                   value='氰'
                                                    ),
                                          html.Button('开始搜索',
                                                      id='main_search_button',
@@ -148,6 +148,7 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                 # 接下来是绘图区域
                 html.Div(className='card my-3', style={'background-color': '#424757'}, children=[
                     html.Div(className='card-body border', children=[
+                        html.Div(id='for_alert', children=[]),
                         cyto.Cytoscape(
                             id='cytoscape-basic',
                             layout={'name': 'cose'},
@@ -163,14 +164,22 @@ app.layout = html.Div(style={'height': '100%'}, children=[
                                 {
                                     'selector': '.node',
                                     'style': {
-                                        'background-color': 'blue',
-                                        'line-color': 'gary'
+                                        'background-color': '#FFEFC2',
+                                        'line-color': '#A8BBFF',
+                                        'color': 'white'
                                     }
                                 },
                                 {
                                     'selector': '.node_main',
                                     'style': {
-                                        'shape': 'rectangle'
+                                        'shape': 'rectangle',
+                                        'background-color': '#FFE18F'
+                                    }
+                                },
+                                {
+                                    'selector': '.edge',
+                                    'style': {
+                                        'line-color': '#15171C'
                                     }
                                 }
                             ]
@@ -197,6 +206,28 @@ app.layout = html.Div(style={'height': '100%'}, children=[
 ])
 
 
+def alert_response(boolean_result):
+    if boolean_result:  # 如为真 则是有结果
+        string_for_alert = '已更新图谱'
+    else:
+        string_for_alert = '未查找到相关数据'
+    response = html.Div(className='alert alert-warning alert-dismissible fade show', role="alert", children=[
+        html.P(children=[string_for_alert]),
+        html.Button(type='button', className='close',
+                    **{
+                        'data-dismiss': 'alert',
+                        'aria-label': 'Close'
+                    },
+                    children=[
+                        html.Span(**{'aria-hidden': 'true'}, children=[
+                            '&times;'
+                        ])
+
+                    ])
+    ])
+    return response
+
+
 # 仅设置搜索框
 @app.callback(
     Output('cytoscape-basic', 'elements'),
@@ -219,6 +250,10 @@ def extract_data_from_neo4j(n_clicks, limit, n_clicks_of_relation, n_clicks_of_c
     elements = driver.data_packing(node_result, link_result)  # 调用封装好的静态方法
 
     # 数据节点选中并刷新
+    if tap_node_data:
+        new_node, new_link = driver.search_data_normal(tap_node_data['label'])
+        new_element = driver.data_packing(new_node, new_link)
+        elements = origin_element_data + new_element  # 叠加数据
 
     # 接下来是筛选器
     if value_relation == '':

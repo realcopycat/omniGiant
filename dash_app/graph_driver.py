@@ -83,7 +83,8 @@ class Neo4jOperator:
                 'data': {'source': link_dict['source'],
                          'target': link_dict['target'],
                          'label': link_dict['edge_description']
-                         }
+                         },
+                'classes': 'edge'
             }
             for link_dict in link_result
         ]
